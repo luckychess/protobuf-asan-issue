@@ -22,4 +22,4 @@ else()
 endif()
 
 add_executable(protobuf_asan_issue main.cpp ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(protobuf_asan_issue ${Protobuf_LIBRARIES} protobuf-mutator ${fuzzing_engine})
+target_link_libraries(protobuf_asan_issue protobuf-mutator ${Protobuf_LIBRARIES} ${fuzzing_engine})

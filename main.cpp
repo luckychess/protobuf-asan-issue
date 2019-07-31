@@ -4,29 +4,17 @@
 #include <vector>
 
 #include <endpoint.pb.h>
+#include <libfuzzer/libfuzzer_macro.h>
 
-int main(int argc, char **argv) {
-  for (int i = 1; i < argc; i++) {
-    std::ifstream in(argv[i]);
-    in.seekg(0, in.end);
-    size_t length = in.tellg();
-    in.seekg(0, in.beg);
-    std::cout << "Reading " << length << " bytes from " << argv[i] << std::endl;
-    // Allocate exactly length bytes so that we reliably catch buffer overflows.
-    std::vector<char> bytes(length);
-    in.read(bytes.data(), bytes.size());
-    assert(in);
-
-    auto data = reinterpret_cast<const uint8_t *>(bytes.data());
-    auto size = bytes.size();
-
-    iroha::protocol::TxStatusRequest tx;
-    tx.Clear();
-
-    if (tx.ParsePartialFromString({data, data + size})) {
-      std::cout << "Execution successful" << std::endl;
-    } else {
-      std::cout << "Execution failed" << std::endl;
-    }
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, std::size_t size) {
+  if (size < 1) {
+    return 0;
   }
+  iroha::protocol::TxStatusRequest tx;
+  if (protobuf_mutator::libfuzzer::LoadProtoInput(true, data, size, &tx)) {
+    std::cout << "Execution successful" << std::endl;
+  } else {
+    std::cout << "Execution failed" << std::endl;
+  }
+  return 0;
 }

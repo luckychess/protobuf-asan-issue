@@ -1,0 +1,12 @@
+/**
+ * Copyright Soramitsu Co., Ltd. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+syntax = "proto3";
+
+package iroha.protocol;
+
+message TxStatusRequest {
+    string tx_hash = 1;
+}
